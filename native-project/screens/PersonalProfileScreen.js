@@ -29,7 +29,6 @@ export default function ProfileScreen({ navigation }) {
 
   const handleUpdateProfile = async (updatedUser) => {
     try {
-      // Dispatch the action to update the user in Redux
       dispatch(setUser(updatedUser));
       await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
     } catch (e) {
@@ -85,6 +84,14 @@ export default function ProfileScreen({ navigation }) {
           style={styles.button}
         >
           <Text style={styles.buttonText}>Создать задачу</Text>
+          </TouchableOpacity>
+      
+          <TouchableOpacity
+          title="Назад"
+          onPress={() => navigation.goBack()}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Вернуться назад</Text>
           </TouchableOpacity>
       </View>
     </View>
