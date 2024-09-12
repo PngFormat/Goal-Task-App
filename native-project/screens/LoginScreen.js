@@ -24,6 +24,7 @@ export default function LoginScreen({ navigation }) {
       console.error("Failed to login", e);
     }
   };
+  console.log(AsyncStorage.getItem('user'))
 
   return (
     <ImageBackground source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4IHBGQwRqf4xCHQwv9iokF4IRww7e-Kft7g&s'}} style={styles.background}>

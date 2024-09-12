@@ -22,6 +22,7 @@ export default function RegisterScreen({ navigation }) {
       console.error("Failed to register user", e);
     }
   };
+  console.log(AsyncStorage.getItem('user'))
 
   return (
     <View style={styles.container}>

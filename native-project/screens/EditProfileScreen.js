@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditProfileScreen({ route, navigation }) {
@@ -7,13 +7,28 @@ export default function EditProfileScreen({ route, navigation }) {
   const [name, setName] = useState(user.name || '');
   const [email, setEmail] = useState(user.email || '');
   const [salary, setSalary] = useState(user.salary ? user.salary.toString() : '');
-  const [savings, setSavings] = useState(user.savings ? user.savings.toString() : '');
+  
+  const currentMonth = new Date().getMonth();
+  const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+  const [monthlySavings, setMonthlySavings] = useState(
+    user.savings && Array.isArray(user.savings) ? 
+      [...user.savings.slice(0, currentMonth + 1).map(s => s.toString())] :
+      Array(currentMonth + 1).fill('')
+  );
 
   const handleSave = async () => {
-    const updatedUser = { ...user, username: name, email, salary: Number(salary), savings: Number(savings) };
+    const updatedUser = { 
+      ...user, 
+      name, 
+      email, 
+      salary: Number(salary), 
+      savings: monthlySavings.map(Number) 
+    };
+
     try {
       onUpdate(updatedUser);
-      await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+      await AsyncStorage.setItem('userInfo', JSON.stringify(updatedUser));
       Alert.alert('Профиль обновлен');
       navigation.goBack();
     } catch (e) {
@@ -21,39 +36,55 @@ export default function EditProfileScreen({ route, navigation }) {
     }
   };
 
+  const handleSavingsChange = (value, index) => {
+    if (Array.isArray(monthlySavings)) {
+      const updatedSavings = [...monthlySavings];
+      updatedSavings[index] = value;
+      setMonthlySavings(updatedSavings);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Имя:</Text>
-      <TextInput
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-      />
-      <Text style={styles.label}>Почта:</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <Text style={styles.label}>Месячная зарплата:</Text>
-      <TextInput
-        style={styles.input}
-        value={salary}
-        onChangeText={setSalary}
-        keyboardType="numeric"
-      />
-      <Text style={styles.label}>Месячные сбережения:</Text>
-      <TextInput
-        style={styles.input}
-        value={savings}
-        onChangeText={setSavings}
-        keyboardType="numeric"
-      />
-      <Button
-        title="Сохранить"
-        onPress={handleSave}
-      />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.label}>Имя:</Text>
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+        />
+        <Text style={styles.label}>Почта:</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+        <Text style={styles.label}>Месячная зарплата:</Text>
+        <TextInput
+          style={styles.input}
+          value={salary}
+          onChangeText={setSalary}
+          keyboardType="numeric"
+        />
+
+        {months.slice(0, currentMonth + 1).map((month, index) => (
+          <View key={index}>
+            <Text style={styles.label}>{month} Сбережения:</Text>
+            <TextInput
+              style={styles.input}
+              value={monthlySavings[index]}
+              onChangeText={(value) => handleSavingsChange(value, index)}
+              keyboardType="numeric"
+            />
+          </View>
+        ))}
+
+        <Button
+          title="Сохранить"
+          onPress={handleSave}
+        />
+      </ScrollView>
     </View>
   );
 }
@@ -75,5 +106,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
 });
