@@ -1,32 +1,63 @@
-import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import { useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ReportsScreen({ navigation }) {
-  const user = useSelector((state) => state.user);
-
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   
+  const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
   const currentMonth = new Date().getMonth(); 
 
-const monthlySalaries = Array(currentMonth + 1).fill(user.salary || 0);
-const monthlySavings = Array(currentMonth + 1).fill(0).map((_, index) => user.savings[index] || 0);
+  // Fetch user data from AsyncStorage
+  const fetchUserData = async () => {
+    try {
+      const userInfo = await AsyncStorage.getItem('userInfo');
+      if (userInfo) {
+        setUser(JSON.parse(userInfo));
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const monthlyData = {
-  labels: months.slice(0, currentMonth + 1),
-  datasets: [
-    {
-      data: monthlySalaries,
-      color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`, 
-      strokeWidth: 2
-    },
-    {
-      data: monthlySavings,
-      color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`, 
-      strokeWidth: 2
-    },
-  ],
-};
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>No user data found.</Text>
+      </View>
+    );
+  }
+
+  const monthlySalaries = Array(currentMonth + 1).fill(user.salary || 0);
+  const monthlySavings = Array(currentMonth + 1).fill(0).map((_, index) => user.savings?.[index] || 0);
+
+  const monthlyData = {
+    labels: months.slice(0, currentMonth + 1),
+    datasets: [
+      {
+        data: monthlySalaries,
+        color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
+        strokeWidth: 2
+      },
+      {
+        data: monthlySavings,
+        color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+        strokeWidth: 2
+      },
+    ],
+  };
 
   return (
     <View style={styles.container}>
@@ -65,8 +96,8 @@ const monthlyData = {
       </View>
 
       <Text style={styles.subtitle}>Информация о зарплате и сбережениях:</Text>
-      <Text style={styles.description}>Текущая зарплата: ${user.salary?.[new Date().getMonth()] || 0}</Text>
-      <Text style={styles.description}>Текущие сбережения: ${user.savings?.[new Date().getMonth()] || 0}</Text>
+      <Text style={styles.description}>Текущая зарплата: ${user.salary?.[currentMonth] || 0}</Text>
+      <Text style={styles.description}>Текущие сбережения: ${user.savings?.[currentMonth] || 0}</Text>
 
       <TouchableOpacity
         onPress={() => navigation.goBack()}

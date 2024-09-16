@@ -4,44 +4,43 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditProfileScreen({ route, navigation }) {
   const { user, onUpdate } = route.params;
+
   const [name, setName] = useState(user.name || '');
   const [email, setEmail] = useState(user.email || '');
   const [salary, setSalary] = useState(user.salary ? user.salary.toString() : '');
-  
-  const currentMonth = new Date().getMonth();
-  const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
+  const currentMonth = new Date().getMonth();
   const [monthlySavings, setMonthlySavings] = useState(
-    user.savings && Array.isArray(user.savings) ? 
-      [...user.savings.slice(0, currentMonth + 1).map(s => s.toString())] :
-      Array(currentMonth + 1).fill('')
+    Array(currentMonth + 1).fill('').map((_, index) => {
+      return user.savings && user.savings[index] !== undefined ? user.savings[index].toString() : '';
+    })
   );
+
+  const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
   const handleSave = async () => {
     const updatedUser = { 
       ...user, 
-      name, 
+      name,
       email, 
       salary: Number(salary), 
       savings: monthlySavings.map(Number) 
     };
 
     try {
-      onUpdate(updatedUser);
-      await AsyncStorage.setItem('userInfo', JSON.stringify(updatedUser));
+      onUpdate(updatedUser);  // Обновляем данные в Redux
+      await AsyncStorage.setItem('userInfo', JSON.stringify(updatedUser));  // Сохраняем обновленные данные в AsyncStorage
       Alert.alert('Профиль обновлен');
-      navigation.goBack();
+      navigation.goBack();  // Возвращаемся к предыдущему экрану
     } catch (e) {
       Alert.alert('Ошибка при сохранении данных');
     }
   };
 
   const handleSavingsChange = (value, index) => {
-    if (Array.isArray(monthlySavings)) {
-      const updatedSavings = [...monthlySavings];
-      updatedSavings[index] = value;
-      setMonthlySavings(updatedSavings);
-    }
+    const updatedSavings = [...monthlySavings];
+    updatedSavings[index] = value;
+    setMonthlySavings(updatedSavings);
   };
 
   return (
@@ -53,6 +52,7 @@ export default function EditProfileScreen({ route, navigation }) {
           value={name}
           onChangeText={setName}
         />
+
         <Text style={styles.label}>Почта:</Text>
         <TextInput
           style={styles.input}
@@ -60,6 +60,7 @@ export default function EditProfileScreen({ route, navigation }) {
           onChangeText={setEmail}
           keyboardType="email-address"
         />
+
         <Text style={styles.label}>Месячная зарплата:</Text>
         <TextInput
           style={styles.input}

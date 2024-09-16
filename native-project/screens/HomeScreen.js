@@ -15,6 +15,7 @@ export default function HomeScreen({ navigation }) {
         const jsonValue = await AsyncStorage.getItem('user');
         if (jsonValue != null) {
           const userData = JSON.parse(jsonValue);
+          console.log('user' ,userData)
           dispatch(setUser(userData));
         } else {
           navigation.navigate('Login');
@@ -40,7 +41,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.buttonWrapper}>
           <Button
             title="О приложении"
-            onPress={() => navigation.navigate('About', {salary: user?.salary, savings: user?.savings || 0 })} // Safe access
+            onPress={() => navigation.navigate('About', {salary: user?.salary, savings: user?.savings || 0 })} 
             color="blue"
           />
         </View>

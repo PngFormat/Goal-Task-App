@@ -1,31 +1,27 @@
 const initialState = {
     username: '',
-    savings: 0,
-    email: '' || null,
+    savings: [],
+    email: null,
     salary: 0,
-}
+    user: null,
+};
 
-const userReducer = (state = initialState,action) => {
+const userReducer = (state = initialState, action) => {
     switch (action.type) {
-        case 'SET_USER': 
-        return {
-            ...state,
-            username: action.payload.username,
-            user: action.payload,
-            savings:action.payload.savings,
-            salary: action.payload.salary,
-            email: action.payload.email,
-        }
-        case 'UPDATE_SAVINGS':
+        case 'SET_USER':
             return {
-              ...state,
-              savings: action.payload,
+                ...state,
+                user: action.payload,
+                username: action.payload.username || '',
+                savings: action.payload.savings || [],
+                salary: action.payload.salary || 0,
+                email: action.payload.email || null,
             };
-          default:
+        case 'LOGOUT_USER':
+            return initialState;
+        default:
             return state;
-        }
-        
-        
-      };
-      
+    }
+};
+
 export default userReducer;

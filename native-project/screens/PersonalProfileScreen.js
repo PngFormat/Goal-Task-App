@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Button, Image, Alert, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useSelector, useDispatch } from 'react-redux';
-import { setUser } from '../redux/actions'
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../redux/actions';
 
 export default function ProfileScreen({ navigation }) {
- 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        const jsonValue = await AsyncStorage.getItem('user');
+        const jsonValue = await AsyncStorage.getItem('userInfo');
         if (jsonValue != null) {
           const userData = JSON.parse(jsonValue);
           dispatch(setUser(userData));
         } else {
+          console.log('No user data found');
           navigation.navigate('Login');
         }
       } catch (e) {
@@ -30,9 +30,20 @@ export default function ProfileScreen({ navigation }) {
   const handleUpdateProfile = async (updatedUser) => {
     try {
       dispatch(setUser(updatedUser));
-      await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+      await AsyncStorage.setItem('userInfo', JSON.stringify(updatedUser));
     } catch (e) {
       Alert.alert('Ошибка при сохранении данных');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('userInfo');
+      dispatch(setUser(null));
+      Alert.alert('Вы вышли из системы');
+      navigation.navigate('Login');
+    } catch (e) {
+      Alert.alert('Ошибка при выходе из системы');
     }
   };
 
@@ -50,11 +61,22 @@ export default function ProfileScreen({ navigation }) {
         <Image source={{ uri: 'https://www.pngall.com/wp-content/uploads/2016/05/Audi-Free-Download-PNG.png' }} style={styles.avatar} />
         <View style={styles.userInfo}>
           <Text style={styles.name}>{user.username}</Text>
+          <Text style={styles.name}>{user.name}</Text>
           <Text style={styles.email}>{user.email}</Text>
           <Text style={styles.info}>Зарплата: {user.salary}</Text>
-          <Text style={styles.info}>Сбережения: {user.savings}</Text>
+          <Text style={styles.info}>Сбережения: </Text>
+          {user.savings && user.savings.length > 0 ? (
+            user.savings.map((saving, index) => (
+              <Text key={index} style={styles.savingsItem}>
+                {`Месяц ${index + 1}: ${saving}`}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.savingsItem}>Нет данных о сбережениях</Text>
+          )}
         </View>
       </View>
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
@@ -62,37 +84,34 @@ export default function ProfileScreen({ navigation }) {
         >
           <Text style={styles.buttonText}>Редактировать профиль</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            Alert.alert('Вы вышли из системы');
-          }}
+          onPress={handleLogout}
         >
           <Text style={styles.buttonText}>Выход</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
-          title="Просмотр машин"
           onPress={() => navigation.navigate('Cars', { savings: user.savings })}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Машины</Text>
-          </TouchableOpacity>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-          title="Задача"
+        <TouchableOpacity
           onPress={() => navigation.navigate('Task', { savings: user.savings })}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Создать задачу</Text>
-          </TouchableOpacity>
-      
-          <TouchableOpacity
-          title="Назад"
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Вернуться назад</Text>
-          </TouchableOpacity>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -135,6 +154,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginBottom: 5,
+  },
+  savingsItem: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 2,
   },
   buttonContainer: {
     marginTop: 20,

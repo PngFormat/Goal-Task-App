@@ -8,10 +8,22 @@ export default function RegisterScreen({ navigation }) {
   const [savings, setSavings] = useState('');
 
   const handleRegister = async () => {
+
+    if (!username || !password || !savings) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
+      return;
+    }
+
+    const savingsValue = parseFloat(savings);
+    if (isNaN(savingsValue)) {
+      Alert.alert('Ошибка', 'Сбережения должны быть числом.');
+      return;
+    }
+
     const user = {
       username,
-      password,
-      savings: parseFloat(savings),
+      password, 
+      savings: savingsValue,
     };
 
     try {
@@ -20,9 +32,10 @@ export default function RegisterScreen({ navigation }) {
       navigation.navigate('Login');
     } catch (e) {
       console.error("Failed to register user", e);
+      Alert.alert('Ошибка', 'Не удалось зарегистрировать пользователя.');
     }
   };
-  console.log(AsyncStorage.getItem('user'))
+  
 
   return (
     <View style={styles.container}>
