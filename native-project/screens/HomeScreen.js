@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, Text, View, ImageBackground, Button } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { setUser } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -15,7 +15,7 @@ export default function HomeScreen({ navigation }) {
         const jsonValue = await AsyncStorage.getItem('user');
         if (jsonValue != null) {
           const userData = JSON.parse(jsonValue);
-          console.log('user' ,userData)
+          console.log('user', userData);
           dispatch(setUser(userData));
         } else {
           navigation.navigate('Login');
@@ -30,55 +30,48 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <ImageBackground source={{ uri: 'https://www.pngall.com/wp-content/uploads/2016/05/Audi-Free-Download-PNG.png' }} style={styles.background}>
-    <View style={styles.overlay}>
-      <Text style={styles.title}>Добро пожаловать!</Text>
-      {user ? (
-        <Text style={styles.subtitle}>Сбережения: {user.savings || 0}</Text>
-      ) : (
-        <Text style={styles.subtitle}>Загрузка сбережений...</Text>
-      )}
-      <View style={styles.buttonContainer}>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="О приложении"
-            onPress={() => navigation.navigate('About', {salary: user?.salary, savings: user?.savings || 0 })} 
-            color="blue"
-          />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Детали"
+      <View style={styles.overlay}>
+        <Text style={styles.title}>Добро пожаловать!</Text>
+        {user ? (
+          <Text style={styles.subtitle}>Сбережения: {user.savings || 0}</Text>
+        ) : (
+          <Text style={styles.subtitle}>Загрузка сбережений...</Text>
+        )}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('About', { salary: user?.salary, savings: user?.savings || 0 })}
+          >
+            <Text style={styles.buttonText}>О приложении</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
             onPress={() => navigation.navigate('Details', { savings: user?.savings || 0 })}
-            color="blue"
-          />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Отчеты"
+          >
+            <Text style={styles.buttonText}>Детали</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
             onPress={() => navigation.navigate('Report', { savings: user?.savings || 0 })}
-            color="blue"
-          />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Машины"
+          >
+            <Text style={styles.buttonText}>Отчеты</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
             onPress={() => navigation.navigate('Cars', { savings: user?.savings || 0 })}
-            color="blue"
-          />
+          >
+            <Text style={styles.buttonText}>Машины</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('Profile', { user })}
+          >
+            <Text style={styles.buttonText}>Профиль</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Профиль"
-            onPress={() => {
-              navigation.navigate('Profile', { user });
-            }}
-            color="blue"
-          />
-        </View>
+        <StatusBar style="light" />
       </View>
-      <StatusBar style="light" />
-    </View>
-  </ImageBackground>
+    </ImageBackground>
   );
 }
 
@@ -88,25 +81,15 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
   },
-  buttonContainer: {
-    width: '80%',
-    alignItems: 'center',
-  },
-  buttonWrapper: {
-    marginBottom: 10,
-    backgroundColor: '#000',
-    borderRadius: 5,
-    overflow: 'hidden',
-    width: '100%',
-  },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',
@@ -116,7 +99,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
     textAlign: 'center',
-    marginHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 30,
+  },
+  buttonContainer: {
+    width: '100%',
+  },
+  button: {
+    backgroundColor: '#1E90FF',
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });

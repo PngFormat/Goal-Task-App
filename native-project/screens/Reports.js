@@ -76,8 +76,8 @@ export default function ReportsScreen({ navigation }) {
             backgroundGradientFrom: '#fb8c00',
             backgroundGradientTo: '#ffa726',
             decimalPlaces: 2,
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             style: {
               borderRadius: 16,
             },
@@ -96,7 +96,7 @@ export default function ReportsScreen({ navigation }) {
       </View>
 
       <Text style={styles.subtitle}>Информация о зарплате и сбережениях:</Text>
-      <Text style={styles.description}>Текущая зарплата: ${user.salary?.[currentMonth] || 0}</Text>
+      <Text style={styles.description}>Текущая зарплата: ${user.salary || 0}</Text>
       <Text style={styles.description}>Текущие сбережения: ${user.savings?.[currentMonth] || 0}</Text>
 
       <TouchableOpacity
@@ -115,23 +115,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: '#f6f7fb',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#222',
+    marginBottom: 20,
+  },
+  chartContainer: {
+    width: '100%',
+    alignItems: 'center',
     marginBottom: 20,
   },
   subtitle: {
     fontSize: 18,
+    color: '#666',
     marginBottom: 10,
     textAlign: 'center',
   },
   button: {
     backgroundColor: '#007BFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginBottom: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 30,
+    shadowColor: '#007BFF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 4,
     width: '100%',
     alignItems: 'center',
   },
@@ -145,10 +157,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  chartContainer: {
-    width: '100%',
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
   },
   chart: {
     borderRadius: 16,
