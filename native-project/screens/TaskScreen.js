@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyleSheet, Text, View, TextInput, Button, ImageBackground, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ImageBackground, Image, Alert, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImagePickerExample from '../ImagePicker/ImagePick'; 
 import { add_goal } from '../redux/actions';
@@ -40,7 +40,7 @@ export default function TaskScreen({ route, navigation }) {
           style={styles.input}
           value={textTask}
           onChangeText={setTextTask}
-          placeholderTextColor="#2c2c2c"
+          placeholderTextColor="#fff"
         />
         <Text style={styles.label}>Введите описание</Text>
         <TextInput
@@ -56,22 +56,18 @@ export default function TaskScreen({ route, navigation }) {
         )}
 
         <View style={styles.columnBtn}>
-          <Button
-            title="Создать"
-            onPress={handleSaveData}
-          />
+          <TouchableOpacity style={styles.button} onPress={handleSaveData}>
+            <Text style={styles.buttonText}>Создать</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.columnBtn}>
-          <Button
-            title="Посмотреть задачи"
-            onPress={() => navigation.navigate('OutputTask')}
-          />
-          <Button
-                title="Вернуться назад"
-                onPress={() => navigation.goBack()}
-                style={styles.backButton}
-              />
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('OutputTask')}>
+            <Text style={styles.buttonText}>Посмотреть задачи</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+            <Text style={styles.buttonText}>Вернуться назад</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -81,19 +77,18 @@ export default function TaskScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   input: {
     height: 40,
-    borderColor: '#333',
+    borderColor: '#ccc',
     borderWidth: 1,
     paddingHorizontal: 10,
-    backgroundColor: '#2c2c2c',
+    backgroundColor: '#333',
     color: '#fff',
     borderRadius: 5,
     width: '100%',
     marginBottom: 15,
   },
   columnBtn: {
-    marginHorizontal: 50,
-    paddingVertical: 20,
-    marginBottom: 15,
+    width: '100%',
+    marginTop: 10,
   },
   container: {
     flex: 1,
@@ -104,16 +99,37 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 30,
     textAlign: 'center',
+    color: 'black',
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 30,
+    shadowColor: '#007BFF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 4,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   label: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: 'black',
   },
   image: {
     width: 100,
     height: 100,
     marginTop: 10,
+    borderRadius: 10,
   },
   background: {
     flex: 1,

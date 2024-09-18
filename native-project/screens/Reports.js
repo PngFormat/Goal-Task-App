@@ -10,7 +10,6 @@ export default function ReportsScreen({ navigation }) {
   const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
   const currentMonth = new Date().getMonth(); 
 
-  // Fetch user data from AsyncStorage
   const fetchUserData = async () => {
     try {
       const userInfo = await AsyncStorage.getItem('userInfo');

@@ -24,6 +24,7 @@ export default function HomeScreen({ navigation }) {
         console.error("Failed to load user data", e);
       }
     };
+    
 
     loadUserData();
   }, [dispatch, navigation]);

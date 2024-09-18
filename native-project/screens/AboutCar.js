@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, Image, View, ScrollView, ActivityIndicator, ProgressBarAndroid } from 'react-native';
-import axios from 'axios';
+import { Button, StyleSheet, Text, Image, View, ScrollView, ActivityIndicator } from 'react-native';
+import ProgressBar from 'react-native-progress/Bar'; // Import ProgressBar from react-native-progress
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function AboutCar({ navigation, route }) {
   const { car, savings } = route.params;
@@ -15,7 +16,7 @@ export default function AboutCar({ navigation, route }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#00bfff" />
+        <ActivityIndicator size="large" color="#ff4081" />
       </View>
     );
   }
@@ -24,36 +25,44 @@ export default function AboutCar({ navigation, route }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: car.image }} style={styles.image} />
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: car.image }} style={styles.image} />
+      </View>
       <Text style={styles.title}>{car.make} {car.model}</Text>
-      <Text style={styles.details}>Год: {car.year}</Text>
-      <Text style={styles.details}>Цвет: {car.color}</Text>
-      <Text style={styles.details}>Пробег: {car.mileage} км</Text>
-      <Text style={styles.details}>Цена: {car.price} $</Text>
-      <Text style={styles.details}>Тип топлива: {car.fuelType}</Text>
-      <Text style={styles.details}>Коробка передач: {car.transmission}</Text>
-      <Text style={styles.details}>Двигатель: {car.engine}</Text>
-      <Text style={styles.details}>Мощность: {car.horsepower} л.с.</Text>
-      <Text style={styles.details}>Количество владельцев: {car.owners}</Text>
-      <Text style={styles.featuresTitle}>Особенности:</Text>
+      <View style={styles.detailsContainer}>
+        <Text style={styles.details}><MaterialIcons name="event" size={16} color="#ff4081" /> {car.year}</Text>
+        <Text style={styles.details}><MaterialIcons name="palette" size={16} color="#ff4081" /> {car.color}</Text>
+        <Text style={styles.details}><MaterialIcons name="speed" size={16} color="#ff4081" /> {car.mileage} km</Text>
+        <Text style={styles.details}><MaterialIcons name="attach-money" size={16} color="#ff4081" /> ${car.price}</Text>
+        <Text style={styles.details}><MaterialIcons name="local-gas-station" size={16} color="#ff4081" /> {car.fuelType}</Text>
+        <Text style={styles.details}><MaterialIcons name="gear" size={16} color="#ff4081" /> {car.transmission}</Text>
+        <Text style={styles.details}><MaterialIcons name="engine" size={16} color="#ff4081" /> {car.engine}</Text>
+        <Text style={styles.details}><MaterialIcons name="power" size={16} color="#ff4081" /> {car.horsepower} hp</Text>
+        <Text style={styles.details}><MaterialIcons name="person" size={16} color="#ff4081" /> {car.owners}</Text>
+      </View>
+      <Text style={styles.featuresTitle}>Features:</Text>
       {car.features.map((feature, index) => (
-        <Text key={index} style={styles.feature}>{feature}</Text>
+        <Text key={index} style={styles.feature}><MaterialIcons name="star" size={16} color="#ff4081" /> {feature}</Text>
       ))}
 
       <View style={styles.progressContainer}>
-        <Text style={styles.progressText}>Сбережения: {savingsPercentage.toFixed(2)}%</Text>
-        <ProgressBarAndroid
-          styleAttr="Horizontal"
-          indeterminate={false}
+        <Text style={styles.progressText}>Savings: {savingsPercentage.toFixed(2)}%</Text>
+        <ProgressBar
           progress={savingsPercentage / 100}
-          color="#00bfff"
+          width={300}
+          color="#ff4081"
+          borderColor="transparent"
+          unfilledColor="#e0e0e0"
+          borderWidth={0}
+          height={8}
         />
       </View>
 
       <Button
-        title="Вернуться назад"
+        title="Back"
         onPress={() => navigation.goBack()}
-        color="#00bfff"
+        color="#ff4081"
+        accessibilityLabel="Go back"
       />
     </ScrollView>
   );
@@ -68,48 +77,61 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#ffffff',
+  },
+  imageContainer: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    marginBottom: 16,
   },
   image: {
     width: '100%',
     height: 300,
-    marginBottom: 20,
-    resizeMode: 'contain',
-    borderRadius: 10,
+    resizeMode: 'cover',
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontWeight: '700',
+    marginBottom: 12,
     textAlign: 'center',
     color: '#333',
   },
+  detailsContainer: {
+    marginBottom: 20,
+  },
   details: {
-    fontSize: 18,
-    marginBottom: 5,
-    color: '#666',
+    fontSize: 16,
+    marginBottom: 8,
+    color: '#555',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   featuresTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
+    fontWeight: '700',
+    marginTop: 16,
+    marginBottom: 12,
     color: '#333',
   },
   feature: {
     fontSize: 16,
-    color: '#666',
+    color: '#555',
+    marginBottom: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   progressContainer: {
     marginTop: 20,
-    width: '100%',
     alignItems: 'center',
   },
   progressText: {
     fontSize: 16,
-    marginBottom: 10,
-    color: '#666',
+    marginBottom: 8,
+    color: '#555',
   },
 });

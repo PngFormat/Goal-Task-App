@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView,StyleSheet, Text, ImageBackground, View, Image, Button } from 'react-native';
+import { ScrollView, StyleSheet, Text, ImageBackground, View, Image, Button, TouchableOpacity } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
 
 export default function FullInfoScreen({ route, navigation }) {
-  const { car, savings, user } = route.params;
+  const { car, savings } = route.params;
   const [monthsToSave, setMonthsToSave] = useState(0);
   const [progress, setProgress] = useState(0);
   const [difference, setDifference] = useState(0);
@@ -25,106 +25,139 @@ export default function FullInfoScreen({ route, navigation }) {
   return (
     <ImageBackground source={{ uri: 'https://www.seekpng.com/png/small/775-7757471_2018-audi-a6-audi-2018-front.png' }} style={styles.background}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <Image source={{ uri: car.image }} style={styles.image} />
-        <Text style={styles.name}>{car.name}</Text>
-        <Text style={styles.details}>Модель: {car.model}</Text>
-        <Text style={styles.details}>Год: {car.year}</Text>
-        <Text style={styles.details}>Цвет: {car.color}</Text>
-        <Text style={styles.details}>Цена: {car.price} $</Text>
+        <View style={styles.container}>
+          <Image source={{ uri: car.image }} style={styles.image} />
+          <Text style={styles.name}>{car.name}</Text>
+          <Text style={styles.details}>Model: {car.model}</Text>
+          <Text style={styles.details}>Year: {car.year}</Text>
+          <Text style={styles.details}>Color: {car.color}</Text>
+          <Text style={styles.details}>Price: {car.price} $</Text>
 
-        {monthsToSave > 0 && (
-          <Text style={styles.result}>
-            Вам нужно копить {monthsToSave} месяцев при текущих ежемесячных сбережениях {savings} $.
+          {monthsToSave > 0 && (
+            <Text style={styles.result}>
+              You need to save for {monthsToSave} months at the current savings rate of {savings} $ per month.
+            </Text>
+          )}
+
+          <Text style={styles.userSavings}>
+            Your current savings: {savings} $
           </Text>
-        )}
 
-        <Text style={styles.userSavings}>
-          Ваши текущие сбережения: {savings} $
-        </Text>
+          <View style={styles.progressContainer}>
+            <ProgressBar progress={progress} width={200} height={15} color='#6200EE' borderWidth={0} />
+            <Text style={styles.progressText}>{(progress * 100).toFixed(2)}%</Text>
+          </View>
 
-        <View style={styles.progressContainer}>
-          <ProgressBar progress={progress} width={200} height={20} color={'#007BFF'} />
-          <Text style={styles.progressText}>{(progress * 100).toFixed(2)}%</Text>
+          <Text style={styles.additionalInfo}>
+            Difference to goal: {difference} $
+          </Text>
+          <Text style={styles.additionalInfo}>
+            Estimated future savings (in a year): {futureSavings} $
+          </Text>
+
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CarInfo', { car, savings })}>
+            <Text style={styles.buttonText}>More Info</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
         </View>
-
-        <Text style={styles.additionalInfo}>
-          Разница до цели: {difference} $
-        </Text>
-        <Text style={styles.additionalInfo}>
-          Оценка будущих сбережений (через год): {futureSavings} $
-        </Text>
-
-        <Button
-          title="Дополнительно"
-          onPress={() => navigation.navigate('CarInfo', { car, savings })}
-        />
-        <Button
-          title="Вернуться назад"
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        />
-      </View>
       </ScrollView>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background for better readability
+    borderRadius: 16,
+    margin: 16,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 150,
+    borderRadius: 16,
     marginBottom: 20,
-  },
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#ddd',
   },
   name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#212121',
+    marginBottom: 10,
   },
   details: {
-    fontSize: 23,
-    marginBottom: 10,
-    fontWeight: 'bold',
-    color: 'white',
+    fontSize: 16,
+    color: '#444',
+    marginBottom: 8,
+    fontWeight: '500',
   },
   result: {
-    fontSize: 18,
-    color: 'white',
+    fontSize: 16,
+    color: '#444',
     marginTop: 20,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   userSavings: {
     fontSize: 18,
-    color: 'white',
-    marginBottom: 10,
+    color: '#333',
+    marginBottom: 20,
   },
   progressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    margin: 10,
+    marginBottom: 20,
   },
   progressText: {
     marginLeft: 10,
     fontSize: 16,
-    color: 'white',
+    color: '#333',
   },
   additionalInfo: {
-    fontFamily: 'Lobster_400Regular',
-    color:'orange',
-    fontSize: 20,
-    marginTop: 10,
+    fontSize: 16,
+    color: '#FF5722',
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginVertical: 10,
+    alignItems: 'center',
+    elevation: 4,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
   },
   backButton: {
-    marginTop: 20,
+    backgroundColor: 'red',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 4,
+  },
+  backButtonText: {
+    color: 'blue',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
