@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { setUser } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
+import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon library
 
 export default function HomeScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -25,19 +26,26 @@ export default function HomeScreen({ navigation }) {
       }
     };
     
-
     loadUserData();
   }, [dispatch, navigation]);
 
   return (
     <ImageBackground source={{ uri: 'https://www.pngall.com/wp-content/uploads/2016/05/Audi-Free-Download-PNG.png' }} style={styles.background}>
       <View style={styles.overlay}>
+        <TouchableOpacity 
+          style={styles.contactIcon} 
+          onPress={() => navigation.navigate('Contact')}
+        >
+          <Icon name="call-outline" size={30} color="#fff" />
+        </TouchableOpacity>
+
         <Text style={styles.title}>Добро пожаловать!</Text>
         {user ? (
           <Text style={styles.subtitle}>Сбережения: {user.savings || 0}</Text>
         ) : (
           <Text style={styles.subtitle}>Загрузка сбережений...</Text>
         )}
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
@@ -88,6 +96,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
+  },
+  contactIcon: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
   },
   title: {
     fontSize: 36,

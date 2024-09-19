@@ -40,13 +40,16 @@ export default function TaskScreen({ route, navigation }) {
           style={styles.input}
           value={textTask}
           onChangeText={setTextTask}
-          placeholderTextColor="#fff"
+          placeholder="Введите цель"
+          placeholderTextColor="#aaa"
         />
         <Text style={styles.label}>Введите описание</Text>
         <TextInput
           style={styles.input}
           value={textInfo}
           onChangeText={setTextInfo}
+          placeholder="Введите описание"
+          placeholderTextColor="#aaa"
         />
         
         <ImagePickerExample setSelectedImage={setSelectedImage} />
@@ -55,85 +58,83 @@ export default function TaskScreen({ route, navigation }) {
           <Image source={{ uri: selectedImage }} style={styles.image} />
         )}
 
-        <View style={styles.columnBtn}>
-          <TouchableOpacity style={styles.button} onPress={handleSaveData}>
-            <Text style={styles.buttonText}>Создать</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.button} onPress={handleSaveData}>
+          <Text style={styles.buttonText}>Создать</Text>
+        </TouchableOpacity>
 
-        <View style={styles.columnBtn}>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('OutputTask')}>
-            <Text style={styles.buttonText}>Посмотреть задачи</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-            <Text style={styles.buttonText}>Вернуться назад</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('OutputTask')}>
+          <Text style={styles.buttonText}>Посмотреть задачи</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.buttonText}>Вернуться назад</Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    backgroundColor: '#333',
-    color: '#fff',
-    borderRadius: 5,
-    width: '100%',
-    marginBottom: 15,
-  },
-  columnBtn: {
-    width: '100%',
-    marginTop: 10,
-  },
   container: {
     flex: 1,
     padding: 20,
+    justifyContent: 'center',
+  },
+  input: {
+    height: 50,
+    backgroundColor: '#1e1e1e',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    color: '#fff',
+    marginBottom: 20,
   },
   title: {
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 30,
-    textAlign: 'center',
     color: 'black',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  label: {
+  
+    fontSize: 18,
+    color: 'black',
+    marginBottom: 10,
   },
   button: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 30,
-    shadowColor: '#007BFF',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 4,
-    marginBottom: 10,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 15,
+    borderRadius: 10,
     alignItems: 'center',
+    marginVertical: 10,
+    shadowColor: '#4CAF50',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+  },
+  secondaryButton: {
+    backgroundColor: '#333',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginVertical: 10,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  label: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: 'black',
-  },
   image: {
-    width: 100,
-    height: 100,
-    marginTop: 10,
+    width: 120,
+    height: 120,
+    marginTop: 20,
     borderRadius: 10,
+    alignSelf: 'center',
   },
   background: {
     flex: 1,
     resizeMode: 'cover',
-    justifyContent: 'center',
   },
 });
+

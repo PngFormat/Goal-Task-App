@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-na
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../redux/actions';
-import Icon from 'react-native-vector-icons/Ionicons'; // Добавляем иконки
+import Icon from 'react-native-vector-icons/Ionicons'; 
 
 export default function ProfileScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -15,7 +15,6 @@ export default function ProfileScreen({ navigation }) {
         const savedUserInfo = await AsyncStorage.getItem('userInfo');
         if (savedUserInfo != null) {
           const userData = JSON.parse(savedUserInfo);
-          console.log(userData)
           dispatch(setUser(userData));
         } else {
           const jsonValue = await AsyncStorage.getItem('user');

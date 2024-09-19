@@ -16,6 +16,7 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import TaskScreen from './screens/TaskScreen';
 import OutputTask from './screens/OutputTasks';
+import Feedback from './screens/FeedBackScreen'
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
@@ -39,6 +40,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Task" component={TaskScreen} />
         <Stack.Screen name="OutputTask" component={OutputTask} />
+        <Stack.Screen name="Contact" component={Feedback} />
     
       </Stack.Navigator>
     </NavigationContainer>

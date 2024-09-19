@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditProfileScreen({ route, navigation }) {
@@ -28,10 +28,10 @@ export default function EditProfileScreen({ route, navigation }) {
     };
 
     try {
-      onUpdate(updatedUser);  // Обновляем данные в Redux
-      await AsyncStorage.setItem('userInfo', JSON.stringify(updatedUser));  // Сохраняем обновленные данные в AsyncStorage
+      onUpdate(updatedUser);
+      await AsyncStorage.setItem('userInfo', JSON.stringify(updatedUser));
       Alert.alert('Профиль обновлен');
-      navigation.goBack();  // Возвращаемся к предыдущему экрану
+      navigation.goBack();
     } catch (e) {
       Alert.alert('Ошибка при сохранении данных');
     }
@@ -46,45 +46,52 @@ export default function EditProfileScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.label}>Имя:</Text>
+        <Text style={styles.label}>Имя</Text>
         <TextInput
           style={styles.input}
           value={name}
           onChangeText={setName}
+          placeholder="Введите имя"
+          placeholderTextColor="#aaa"
         />
 
-        <Text style={styles.label}>Почта:</Text>
+        <Text style={styles.label}>Почта</Text>
         <TextInput
           style={styles.input}
           value={email}
           onChangeText={setEmail}
+          placeholder="Введите почту"
+          placeholderTextColor="#aaa"
           keyboardType="email-address"
         />
 
-        <Text style={styles.label}>Месячная зарплата:</Text>
+        <Text style={styles.label}>Месячная зарплата</Text>
         <TextInput
           style={styles.input}
           value={salary}
           onChangeText={setSalary}
+          placeholder="Введите зарплату"
+          placeholderTextColor="#aaa"
           keyboardType="numeric"
         />
 
         {months.slice(0, currentMonth + 1).map((month, index) => (
           <View key={index}>
-            <Text style={styles.label}>{month} Сбережения:</Text>
+            <Text style={styles.label}>{month} Сбережения</Text>
             <TextInput
               style={styles.input}
               value={monthlySavings[index]}
               onChangeText={(value) => handleSavingsChange(value, index)}
+              placeholder="Введите сбережения"
+              placeholderTextColor="#aaa"
               keyboardType="numeric"
             />
           </View>
         ))}
 
-        <Button
-          title="Сохранить"
-          onPress={handleSave}
-        />
+        <TouchableOpacity style={styles.button} onPress={handleSave}>
+          <Text style={styles.buttonText}>Сохранить</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -94,22 +101,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    backgroundColor: '#f0f0f0',
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'center',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  input: {
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+    fontSize: 16,
+    borderColor: '#ddd',
+    borderWidth: 1,
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

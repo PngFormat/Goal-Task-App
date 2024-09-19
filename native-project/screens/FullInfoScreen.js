@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background for better readability
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 16,
     margin: 16,
   },
