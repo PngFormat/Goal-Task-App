@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoadingAnimation from '../components/loadingIndicator';
+
 
 export default function ReportsScreen({ navigation }) {
   const [user, setUser] = useState(null);
@@ -19,7 +22,9 @@ export default function ReportsScreen({ navigation }) {
     } catch (error) {
       console.error('Error fetching user info:', error);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
   };
 
@@ -28,8 +33,11 @@ export default function ReportsScreen({ navigation }) {
   }, []);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return (
+      <LoadingAnimation/>
+    );
   }
+
 
   if (!user) {
     return (
@@ -116,6 +124,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f6f7fb',
   },
+  
   title: {
     fontSize: 28,
     fontWeight: 'bold',

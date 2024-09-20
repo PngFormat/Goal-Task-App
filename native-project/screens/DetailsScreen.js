@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useEffect, useReducer,useState } from 'react';
 import { ImageBackground, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import LoadingAnimation from '../components/loadingIndicator';
 
 export default function DetailsScreen({ navigation }) {
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    },1000)
+
+    return () => clearTimeout(timer);
+  },[])
+
+  if (loading) {
+    return (
+    <LoadingAnimation/>
+    );
+  }
+
+
   return (
     <LinearGradient
       colors={['#00c6ff', '#0072ff']}

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, Image, View, ScrollView, ActivityIndicator } from 'react-native';
-import ProgressBar from 'react-native-progress/Bar'; // Import ProgressBar from react-native-progress
+import { Button, StyleSheet, Text, Image, View, ScrollView, ActivityIndicator,TouchableOpacity } from 'react-native';
+import ProgressBar from 'react-native-progress/Bar'; 
 import { MaterialIcons } from '@expo/vector-icons';
+import LoadingAnimation from '../components/loadingIndicator';
 
 export default function AboutCar({ navigation, route }) {
   const { car, savings } = route.params;
@@ -15,9 +16,7 @@ export default function AboutCar({ navigation, route }) {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#ff4081" />
-      </View>
+      <LoadingAnimation/>
     );
   }
 
@@ -25,9 +24,11 @@ export default function AboutCar({ navigation, route }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       <View style={styles.imageContainer}>
         <Image source={{ uri: car.image }} style={styles.image} />
       </View>
+      <View styles={styles.containerCar}>
       <Text style={styles.title}>{car.make} {car.model}</Text>
       <View style={styles.detailsContainer}>
         <Text style={styles.details}><MaterialIcons name="event" size={16} color="#ff4081" /> {car.year}</Text>
@@ -58,12 +59,13 @@ export default function AboutCar({ navigation, route }) {
         />
       </View>
 
-      <Button
-        title="Back"
-        onPress={() => navigation.goBack()}
-        color="#ff4081"
-        accessibilityLabel="Go back"
-      />
+          <TouchableOpacity
+      style={styles.backButton}
+      onPress={() => navigation.goBack()}
+    >
+      <Text style={styles.buttonText}>Back</Text>
+    </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
@@ -73,12 +75,35 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#7be8d0',
   },
   container: {
     flexGrow: 1,
     padding: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#8ad6f2',
+  },
+  backButton: {
+    backgroundColor: '#0c4357',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  
+  containerCar: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#7be8d0',
+    borderRadius: 16,
+    margin: 16,
   },
   imageContainer: {
     borderRadius: 16,
@@ -106,6 +131,7 @@ const styles = StyleSheet.create({
   },
   details: {
     fontSize: 16,
+    fontWeight: '800',
     marginBottom: 8,
     color: '#555',
     flexDirection: 'row',
@@ -120,6 +146,7 @@ const styles = StyleSheet.create({
   },
   feature: {
     fontSize: 16,
+    fontWeight: '800',
     color: '#555',
     marginBottom: 6,
     flexDirection: 'row',

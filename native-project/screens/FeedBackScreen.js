@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert,ImageBackground } from 'react-native';
 
 export default function FeedbackScreen({ navigation }) {
   const [feedback, setFeedback] = useState('');
@@ -19,6 +19,8 @@ export default function FeedbackScreen({ navigation }) {
   };
 
   return (
+    <ImageBackground source={{ uri: 'https://www.pngall.com/wp-content/uploads/2016/05/Audi-Free-Download-PNG.png' }} style={styles.background}>
+    <View style={styles.overlay}>
     <View style={styles.container}>
       <Text style={styles.title}>Оставьте отзыв</Text>
       
@@ -41,15 +43,34 @@ export default function FeedbackScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Отправить</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+          <Text style={styles.buttonText}>Вернуться назад</Text>
+        </TouchableOpacity>
     </View>
+    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    width:'80%',
+    height:'10%',
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#587580',
+    justifyContent: 'center',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
     justifyContent: 'center',
   },
   title: {
@@ -76,6 +97,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+    marginBottom:10,
   },
   buttonText: {
     color: '#fff',

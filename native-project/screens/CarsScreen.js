@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Image, View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import LoadingAnimation from '../components/loadingIndicator';
 
 export default function CarsScreen({ navigation }) {
   const { savings, user } = useSelector(state => state.user);
@@ -26,9 +27,7 @@ export default function CarsScreen({ navigation }) {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FF6F61" />
-      </View>
+      <LoadingAnimation/>
     );
   }
 
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: '#8ad6f2',
   },
   loadingContainer: {
     flex: 1,
@@ -82,6 +81,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
+    borderColor: 'black',
     marginBottom: 16,
     padding: 16,
     flexDirection: 'row',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, ImageBackground, View, Image, Button, TouchableOpacity } from 'react-native';
-import ProgressBar from 'react-native-progress/Bar';
+import LoadingAnimation from '../components/loadingIndicator';
+
 
 export default function FullInfoScreen({ route, navigation }) {
   const { car, savings } = route.params;
@@ -8,7 +9,9 @@ export default function FullInfoScreen({ route, navigation }) {
   const [progress, setProgress] = useState(0);
   const [difference, setDifference] = useState(0);
   const [futureSavings, setFutureSavings] = useState(0);
+  const [loading, setLoading] = useState(true);
 
+  const progressValue = isNaN(progress) ? 0 : progress;
   useEffect(() => {
     const calculateMetrics = () => {
       if (savings > 0) {
@@ -18,9 +21,16 @@ export default function FullInfoScreen({ route, navigation }) {
         setDifference(car.price - savings);
         setFutureSavings(savings * 12);
       }
+      setLoading(false);
     };
     calculateMetrics();
   }, [savings, car.price]);
+
+  if (loading) {
+    return (
+      <LoadingAnimation/>
+    );
+  }
 
   return (
     <ImageBackground source={{ uri: 'https://www.seekpng.com/png/small/775-7757471_2018-audi-a6-audi-2018-front.png' }} style={styles.background}>
@@ -44,7 +54,7 @@ export default function FullInfoScreen({ route, navigation }) {
           </Text>
 
           <View style={styles.progressContainer}>
-            <ProgressBar progress={progress} width={200} height={15} color='#6200EE' borderWidth={0} />
+            
             <Text style={styles.progressText}>{(progress * 100).toFixed(2)}%</Text>
           </View>
 
@@ -82,7 +92,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: '#8ad6f2',
     borderRadius: 16,
     margin: 16,
   },
@@ -134,7 +144,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: '#0c4357',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -143,12 +153,12 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: '#59bade',
     fontSize: 16,
     fontWeight: '500',
   },
   backButton: {
-    backgroundColor: 'red',
+    backgroundColor: '#0c4357',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -156,7 +166,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   backButtonText: {
-    color: 'blue',
+    color: '#59bade',
     fontSize: 16,
     fontWeight: '500',
   },
