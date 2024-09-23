@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export default function EditProfileScreen({ route, navigation }) {
   const { user, onUpdate } = route.params;
@@ -43,9 +44,21 @@ export default function EditProfileScreen({ route, navigation }) {
     setMonthlySavings(updatedSavings);
   };
 
+  const handleLogout =() => {
+    try{
+      navigation.goBack()
+    } catch (e) {
+      Alert.alert('Ошибка при выходе');
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Icon name="log-out-outline" size={28} color="#fff" />
+      </TouchableOpacity>
+       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.label}>Имя</Text>
         <TextInput
           style={styles.input}
@@ -139,5 +152,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  logoutButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    backgroundColor: '#FF6347',
+    padding: 10,
+    borderRadius: 50,
+    zIndex: 1, 
   },
 });

@@ -41,7 +41,10 @@ export default function HomeScreen({ navigation }) {
 
         <Text style={styles.title}>Добро пожаловать!</Text>
         {user ? (
-          <Text style={styles.subtitle}>Сбережения: {user.savings || 0}</Text>
+        <Text style={styles.subtitle}>
+        Сбережения: {user?.savings ? user.savings.toLocaleString() : 0}
+      </Text>
+      
         ) : (
           <Text style={styles.subtitle}>Загрузка сбережений...</Text>
         )}
