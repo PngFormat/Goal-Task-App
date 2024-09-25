@@ -1,9 +1,27 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert,ImageBackground } from 'react-native';
+import React, { useState,useRef,useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert,ImageBackground,Animated } from 'react-native';
 
 export default function FeedbackScreen({ navigation }) {
   const [feedback, setFeedback] = useState('');
   const [email, setEmail] = useState('');
+  const fadeAnim = useRef(new Animated.Value(0)).current; 
+  const slideAnim = useRef(new Animated.Value(300)).current;
+
+  useEffect(() => {
+
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, [fadeAnim, slideAnim]);
 
   const handleSubmit = () => {
     if (feedback.trim() === '') {
@@ -18,10 +36,11 @@ export default function FeedbackScreen({ navigation }) {
     navigation.goBack();
   };
 
+
   return (
     <ImageBackground source={{ uri: 'https://www.pngall.com/wp-content/uploads/2016/05/Audi-Free-Download-PNG.png' }} style={styles.background}>
     <View style={styles.overlay}>
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
       <Text style={styles.title}>Оставьте отзыв</Text>
       
       <TextInput
@@ -46,7 +65,7 @@ export default function FeedbackScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
           <Text style={styles.buttonText}>Вернуться назад</Text>
         </TouchableOpacity>
-    </View>
+    </Animated.View>
     </View>
     </ImageBackground>
   );
@@ -55,9 +74,14 @@ export default function FeedbackScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     width:'80%',
-    height:'10%',
-    flex: 1,
+    height:'50%',
+    borderRadius: 20,
     padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
     backgroundColor: '#587580',
     justifyContent: 'center',
   },

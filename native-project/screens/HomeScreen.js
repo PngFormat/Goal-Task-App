@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity,Animated } from 'react-native';
 import { setUser } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
-import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon library
+import Icon from 'react-native-vector-icons/Ionicons'; 
 
 export default function HomeScreen({ navigation }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(100)).current;
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -25,9 +28,32 @@ export default function HomeScreen({ navigation }) {
         console.error("Failed to load user data", e);
       }
     };
+
+
     
-    loadUserData();
-  }, [dispatch, navigation]);
+
+
+
+    fadeAnim.setValue(0);
+    slideAnim.setValue(100);
+
+
+  Animated.sequence([
+    Animated.timing(fadeAnim , {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration:500,
+      useNativeDriver: true,
+    })
+  ]).start();
+  loadUserData();
+  },  [fadeAnim, slideAnim, dispatch, navigation]);
+
+  
 
   return (
     <ImageBackground source={{ uri: 'https://www.pngall.com/wp-content/uploads/2016/05/Audi-Free-Download-PNG.png' }} style={styles.background}>
@@ -39,7 +65,7 @@ export default function HomeScreen({ navigation }) {
           <Icon name="call-outline" size={30} color="#fff" />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Добро пожаловать!</Text>
+        <Animated.Text style={[styles.title, {opacity : fadeAnim}]}>Добро пожаловать!</Animated.Text>
         {user ? (
         <Text style={styles.subtitle}>
         Сбережения: {user?.savings ? user.savings.toLocaleString() : 0}
@@ -49,7 +75,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.subtitle}>Загрузка сбережений...</Text>
         )}
 
-        <View style={styles.buttonContainer}>
+        <Animated.View style={[styles.buttonContainer, {transform: [{translateY: slideAnim}]}]}>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('About', { salary: user?.salary, savings: user?.savings || 0 })}
@@ -80,7 +106,7 @@ export default function HomeScreen({ navigation }) {
           >
             <Text style={styles.buttonText}>Профиль</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
         <StatusBar style="light" />
       </View>
     </ImageBackground>
