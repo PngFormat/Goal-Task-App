@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, TextInput, ImageBackground, Image, Alert, Touch
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImagePickerExample from '../ImagePicker/ImagePick'; 
 import { add_goal } from '../redux/actions';
+import Icon from 'react-native-vector-icons/Ionicons';
+import LogoutButton from '../components/logoutButton';
 
 export default function TaskScreen({ route, navigation }) {
   const user = useSelector((state) => state.user);
@@ -11,7 +13,6 @@ export default function TaskScreen({ route, navigation }) {
   const id = useSelector((state) => state.goals.id);
   const [textTask, setTextTask] = useState('');
   const [textInfo, setTextInfo] = useState('');
-  const [numberGoal, setNumberGoal] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
   const dispatch = useDispatch();
 
@@ -20,7 +21,6 @@ export default function TaskScreen({ route, navigation }) {
     dispatch(add_goal(newGoal));
     setTextTask('');
     setTextInfo('');
-    setNumberGoal(numberGoal + 1);
 
     try {
       await AsyncStorage.setItem('goals', JSON.stringify([...goals, { ...newGoal, id }]));
@@ -31,10 +31,11 @@ export default function TaskScreen({ route, navigation }) {
   };
 
   return (
-    <ImageBackground source={{ uri: 'https://sendsay.ru/blog/storage/2022/05/27/9e784a3c95f20eec8aa4c324d2f54caa880956bb.png' }} style={styles.background}>
       <View style={styles.container}>
+        <LogoutButton navigation={navigation}/>
         <Text style={styles.title}>Создание задачи</Text>
-        <Text style={styles.label}>Ваши сбережения: {user.savings}</Text>
+        <Text style={styles.label}>Ваши сбережения: {user.savings} $</Text>
+        
         <Text style={styles.label}>Введите цель</Text>
         <TextInput
           style={styles.input}
@@ -43,6 +44,7 @@ export default function TaskScreen({ route, navigation }) {
           placeholder="Введите цель"
           placeholderTextColor="#aaa"
         />
+        
         <Text style={styles.label}>Введите описание</Text>
         <TextInput
           style={styles.input}
@@ -51,8 +53,8 @@ export default function TaskScreen({ route, navigation }) {
           placeholder="Введите описание"
           placeholderTextColor="#aaa"
         />
-        
-        <ImagePickerExample setSelectedImage={setSelectedImage} />
+
+        {/* <ImagePickerExample setSelectedImage={setSelectedImage} /> */}
         
         {selectedImage && (
           <Image source={{ uri: selectedImage }} style={styles.image} />
@@ -66,11 +68,12 @@ export default function TaskScreen({ route, navigation }) {
           <Text style={styles.buttonText}>Посмотреть задачи</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Вернуться назад</Text>
+        <TouchableOpacity style={styles.goalButton} onPress={() => navigation.navigate('SetGoals')}>
+          <Icon name="trophy-outline" size={20} color="#fff" />
+          <Text style={styles.goalButtonText}>Создать цель</Text>
         </TouchableOpacity>
       </View>
-    </ImageBackground>
+  
   );
 }
 
@@ -82,24 +85,24 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    backgroundColor: '#1e1e1e',
+    backgroundColor: '#ffffff',
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 16,
-    color: '#fff',
+    color: '#333',
     marginBottom: 20,
+    elevation: 3, 
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#333',
     textAlign: 'center',
     marginBottom: 30,
   },
   label: {
-  
     fontSize: 18,
-    color: 'black',
+    color: '#555',
     marginBottom: 10,
   },
   button: {
@@ -108,17 +111,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginVertical: 10,
+    elevation: 5,
     shadowColor: '#4CAF50',
     shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
   },
   secondaryButton: {
-    backgroundColor: '#333',
+    backgroundColor: '#555',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
     marginVertical: 10,
+    elevation: 3,
   },
   buttonText: {
     color: '#fff',
@@ -131,10 +136,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 10,
     alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd', 
   },
   background: {
     flex: 1,
     resizeMode: 'cover',
   },
+  goalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f39c12',
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignSelf: 'center',
+    marginTop: 15,
+    elevation: 3,
+  },
+  goalButtonText: {
+    color: '#fff',
+    marginLeft: 5,
+    fontSize: 16,
+  },
 });
-

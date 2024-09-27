@@ -4,6 +4,7 @@ import { LineChart } from 'react-native-chart-kit';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingAnimation from '../components/loadingIndicator';
+import SetGoalScreen from './SetGoalScreen';
 
 
 export default function ReportsScreen({ navigation }) {
@@ -112,6 +113,13 @@ export default function ReportsScreen({ navigation }) {
       >
         <Text style={styles.buttonText}>Вернуться назад</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => navigation.navigate('SetGoals')}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Установить цели</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -122,53 +130,59 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f6f7fb',
+    backgroundColor: '#c5dced', 
   },
-  
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#222',
+    color: '#333',
     marginBottom: 20,
   },
   chartContainer: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
+    backgroundColor: '#FFF', 
+    borderRadius: 16,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   subtitle: {
-    fontSize: 18,
-    color: '#666',
+    fontSize: 20,
+    color: '#555',
     marginBottom: 10,
     textAlign: 'center',
+    fontWeight: '500',
   },
   button: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 30,
-    shadowColor: '#007BFF',
+    backgroundColor: '#1E90FF',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    shadowColor: '#1E90FF',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    elevation: 4,
-    width: '100%',
+    elevation: 6,
+    marginTop: 20,
+    width: '90%',
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '600',
   },
   description: {
-    fontSize: 16,
+    fontSize: 18,
+    color: '#444',
     textAlign: 'center',
-    marginBottom: 20,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginVertical: 10,
+    fontWeight: '400',
   },
   chart: {
     borderRadius: 16,

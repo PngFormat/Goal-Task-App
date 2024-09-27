@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../redux/actions';
 import Icon from 'react-native-vector-icons/Ionicons'; 
+import LogoutButton from '../components/logoutButton';
+
 
 export default function ProfileScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -63,7 +65,9 @@ export default function ProfileScreen({ navigation }) {
   }
 
   return (
+    <ScrollView style={styles.container}>
     <View style={styles.container}>
+      <LogoutButton navigation={navigation}/>
       <View style={styles.header}>
         <Image source={{ uri: 'https://www.pngall.com/wp-content/uploads/2016/05/Audi-Free-Download-PNG.png' }} style={styles.avatar} />
         <View style={styles.userInfo}>
@@ -82,11 +86,14 @@ export default function ProfileScreen({ navigation }) {
             user.savings.map((saving, index) => (
               <Text key={index} style={styles.savingsItem}>
                 {`Месяц ${index + 1}: ${saving}`}
+                
               </Text>
+              
             ))
           ) : (
             <Text style={styles.savingsItem}>Нет данных о сбережениях</Text>
           )}
+       
         </View>
       </View>
 
@@ -119,16 +126,12 @@ export default function ProfileScreen({ navigation }) {
           <Icon name="checkmark-done-outline" size={20} color="#fff" />
           <Text style={styles.buttonText}>Создать задачу</Text>
         </TouchableOpacity>
+      
 
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.button}
-        >
-          <Icon name="arrow-back-outline" size={20} color="#fff" />
-          <Text style={styles.buttonText}>Вернуться назад</Text>
-        </TouchableOpacity>
+     
       </View>
     </View>
+    </ScrollView>
   );
 }
 
@@ -136,7 +139,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
-    padding: 20,
+    padding: 10,
   },
   header: {
     flexDirection: 'row',
@@ -209,6 +212,21 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  goalButton: {
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E90FF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    justifyContent: 'center',
+  },
+  goalButtonText: {
+    color: '#fff',
+    fontSize: 16,
     marginLeft: 10,
   },
 });

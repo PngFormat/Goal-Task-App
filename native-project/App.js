@@ -19,6 +19,7 @@ import OutputTask from './screens/OutputTasks';
 import Feedback from './screens/FeedBackScreen'
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import SetGoalScreen from './screens/SetGoalScreen';
 
 const Stack = createStackNavigator();
 
@@ -41,6 +42,7 @@ export default function App() {
         <Stack.Screen name="Task" component={TaskScreen} />
         <Stack.Screen name="OutputTask" component={OutputTask} />
         <Stack.Screen name="Contact" component={Feedback} />
+        <Stack.Screen name="SetGoals" component={SetGoalScreen} />
     
       </Stack.Navigator>
     </NavigationContainer>

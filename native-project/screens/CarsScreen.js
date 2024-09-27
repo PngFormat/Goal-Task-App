@@ -3,6 +3,7 @@ import { StyleSheet, Text, Image, View, FlatList, ActivityIndicator, TouchableOp
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import LoadingAnimation from '../components/loadingIndicator';
+import LogoutButton from '../components/logoutButton';
 
 export default function CarsScreen({ navigation }) {
   const { savings, user } = useSelector(state => state.user);
@@ -33,6 +34,7 @@ export default function CarsScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <LogoutButton navigation={navigation}/>
       <Text style={styles.title}>Car Gallery</Text>
       <FlatList
         data={cars}
@@ -49,9 +51,7 @@ export default function CarsScreen({ navigation }) {
         )}
         contentContainerStyle={styles.listContent}
       />
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>Back</Text>
-      </TouchableOpacity>
+     
     </View>
   );
 }
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#8ad6f2',
+    backgroundColor: '#c5dced',
   },
   loadingContainer: {
     flex: 1,

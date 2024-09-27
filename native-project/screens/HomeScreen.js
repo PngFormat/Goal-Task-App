@@ -1,117 +1,94 @@
-import React, { useEffect,useRef } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity,Animated } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
 import { setUser } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
-import Icon from 'react-native-vector-icons/Ionicons'; 
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export default function HomeScreen({ navigation }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(true);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(100)).current;
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem('user');
-        if (jsonValue != null) {
-          const userData = JSON.parse(jsonValue);
-          console.log('user', userData);
-          dispatch(setUser(userData));
-        } else {
-          navigation.navigate('Login');
-        }
-      } catch (e) {
-        console.error("Failed to load user data", e);
+  const loadUserData = useCallback(async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('user');
+      if (jsonValue != null) {
+        const userData = JSON.parse(jsonValue);
+        dispatch(setUser(userData));
+      } else {
+        navigation.navigate('Login');
       }
-    };
+    } catch (e) {
+      console.error("Failed to load user data", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch, navigation]);
 
-
-    
-
-
-
+  useEffect(() => {
     fadeAnim.setValue(0);
     slideAnim.setValue(100);
 
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
-  Animated.sequence([
-    Animated.timing(fadeAnim , {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration:500,
-      useNativeDriver: true,
-    })
-  ]).start();
-  loadUserData();
-  },  [fadeAnim, slideAnim, dispatch, navigation]);
+    loadUserData();
+  }, [fadeAnim, slideAnim, loadUserData]);
 
-  
+  const renderButtons = () => (
+    <>
+      <Button title="О приложении" onPress={() => navigation.navigate('About', { salary: user?.salary, savings: user?.savings || 0 })} />
+      <Button title="Детали" onPress={() => navigation.navigate('Details', { savings: user?.savings || 0 })} />
+      <Button title="Отчеты" onPress={() => navigation.navigate('Report', { savings: user?.savings || 0 })} />
+      <Button title="Машины" onPress={() => navigation.navigate('Cars', { savings: user?.savings || 0 })} />
+      <Button title="Профиль" onPress={() => navigation.navigate('Profile', { user })} />
+    </>
+  );
 
   return (
     <ImageBackground source={{ uri: 'https://www.pngall.com/wp-content/uploads/2016/05/Audi-Free-Download-PNG.png' }} style={styles.background}>
       <View style={styles.overlay}>
-        <TouchableOpacity 
-          style={styles.contactIcon} 
-          onPress={() => navigation.navigate('Contact')}
-        >
+        <TouchableOpacity style={styles.contactIcon} onPress={() => navigation.navigate('Contact')}>
           <Icon name="call-outline" size={30} color="#fff" />
         </TouchableOpacity>
 
-        <Animated.Text style={[styles.title, {opacity : fadeAnim}]}>Добро пожаловать!</Animated.Text>
-        {user ? (
-        <Text style={styles.subtitle}>
-        Сбережения: {user?.savings ? user.savings.toLocaleString() : 0}
-      </Text>
-      
+        <Animated.Text style={[styles.title, { opacity: fadeAnim }]}>Добро пожаловать!</Animated.Text>
+        
+        {loading ? (
+          <ActivityIndicator size="large" color="#fff" />
         ) : (
-          <Text style={styles.subtitle}>Загрузка сбережений...</Text>
+          <Text style={styles.subtitle}>Сбережения: {user?.savings ? user.savings.toLocaleString() : 0}</Text>
         )}
 
-        <Animated.View style={[styles.buttonContainer, {transform: [{translateY: slideAnim}]}]}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('About', { salary: user?.salary, savings: user?.savings || 0 })}
-          >
-            <Text style={styles.buttonText}>О приложении</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Details', { savings: user?.savings || 0 })}
-          >
-            <Text style={styles.buttonText}>Детали</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Report', { savings: user?.savings || 0 })}
-          >
-            <Text style={styles.buttonText}>Отчеты</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Cars', { savings: user?.savings || 0 })}
-          >
-            <Text style={styles.buttonText}>Машины</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Profile', { user })}
-          >
-            <Text style={styles.buttonText}>Профиль</Text>
-          </TouchableOpacity>
+        <Animated.View style={[styles.buttonContainer, { transform: [{ translateY: slideAnim }] }]}>
+          {renderButtons()}
         </Animated.View>
         <StatusBar style="light" />
       </View>
     </ImageBackground>
   );
 }
+
+const Button = ({ title, onPress }) => (
+  <TouchableOpacity style={styles.button} onPress={onPress}>
+    <Text style={styles.buttonText}>{title}</Text>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   background: {
