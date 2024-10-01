@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyleSheet, Text, View, TextInput, ImageBackground, Image, Alert, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import ImagePickerExample from '../ImagePicker/ImagePick'; 
+import { StyleSheet, Text, View, TextInput, Image, Alert, TouchableOpacity } from 'react-native';
+import EncryptedStorage from 'react-native-encrypted-storage'; // Secure storage import
 import { add_goal } from '../redux/actions';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LogoutButton from '../components/logoutButton';
 
-export default function TaskScreen({ route, navigation }) {
+export default function TaskScreen({ navigation }) {
   const user = useSelector((state) => state.user);
   const goals = useSelector((state) => state.goals.goals);
   const id = useSelector((state) => state.goals.id);
@@ -17,63 +16,69 @@ export default function TaskScreen({ route, navigation }) {
   const dispatch = useDispatch();
 
   const handleSaveData = async () => {
-    const newGoal = { goal: textTask, textInfo, imageUri: selectedImage };
+    if (!textTask || !textInfo) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
+      return;
+    }
+
+    const newGoal = { goal: textTask, textInfo, imageUri: selectedImage, id };
     dispatch(add_goal(newGoal));
-    setTextTask('');
-    setTextInfo('');
 
     try {
-      await AsyncStorage.setItem('goals', JSON.stringify([...goals, { ...newGoal, id }]));
+      const storedGoals = await EncryptedStorage.getItem('goals');
+      const goalsArray = storedGoals ? JSON.parse(storedGoals) : [];
+      await EncryptedStorage.setItem('goals', JSON.stringify([...goalsArray, newGoal]));
+
+      setTextTask('');
+      setTextInfo('');
       Alert.alert('Успешно', 'Задача успешно добавлена');
     } catch (e) {
       console.error('Ошибка сохранения задач', e);
+      Alert.alert('Ошибка', 'Не удалось сохранить задачу.');
     }
   };
 
   return (
-      <View style={styles.container}>
-        <LogoutButton navigation={navigation}/>
-        <Text style={styles.title}>Создание задачи</Text>
-        <Text style={styles.label}>Ваши сбережения: {user.savings} $</Text>
-        
-        <Text style={styles.label}>Введите цель</Text>
-        <TextInput
-          style={styles.input}
-          value={textTask}
-          onChangeText={setTextTask}
-          placeholder="Введите цель"
-          placeholderTextColor="#aaa"
-        />
-        
-        <Text style={styles.label}>Введите описание</Text>
-        <TextInput
-          style={styles.input}
-          value={textInfo}
-          onChangeText={setTextInfo}
-          placeholder="Введите описание"
-          placeholderTextColor="#aaa"
-        />
+    <View style={styles.container}>
+      <LogoutButton navigation={navigation} />
+      <Text style={styles.title}>Создание задачи</Text>
+      <Text style={styles.label}>Ваши сбережения: {user.savings} $</Text>
 
-        {/* <ImagePickerExample setSelectedImage={setSelectedImage} /> */}
-        
-        {selectedImage && (
-          <Image source={{ uri: selectedImage }} style={styles.image} />
-        )}
+      <Text style={styles.label}>Введите цель</Text>
+      <TextInput
+        style={styles.input}
+        value={textTask}
+        onChangeText={setTextTask}
+        placeholder="Введите цель"
+        placeholderTextColor="#aaa"
+      />
 
-        <TouchableOpacity style={styles.button} onPress={handleSaveData}>
-          <Text style={styles.buttonText}>Создать</Text>
-        </TouchableOpacity>
+      <Text style={styles.label}>Введите описание</Text>
+      <TextInput
+        style={styles.input}
+        value={textInfo}
+        onChangeText={setTextInfo}
+        placeholder="Введите описание"
+        placeholderTextColor="#aaa"
+      />
 
-        <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('OutputTask')}>
-          <Text style={styles.buttonText}>Посмотреть задачи</Text>
-        </TouchableOpacity>
+      {selectedImage && (
+        <Image source={{ uri: selectedImage }} style={styles.image} />
+      )}
 
-        <TouchableOpacity style={styles.goalButton} onPress={() => navigation.navigate('SetGoals')}>
-          <Icon name="trophy-outline" size={20} color="#fff" />
-          <Text style={styles.goalButtonText}>Создать цель</Text>
-        </TouchableOpacity>
-      </View>
-  
+      <TouchableOpacity style={styles.button} onPress={handleSaveData}>
+        <Text style={styles.buttonText}>Создать</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('OutputTask')}>
+        <Text style={styles.buttonText}>Посмотреть задачи</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.goalButton} onPress={() => navigation.navigate('SetGoals')}>
+        <Icon name="trophy-outline" size={20} color="#fff" />
+        <Text style={styles.goalButtonText}>Создать цель</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -138,10 +143,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderWidth: 1,
     borderColor: '#ddd', 
-  },
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
   },
   goalButton: {
     flexDirection: 'row',

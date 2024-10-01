@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert,ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import bcrypt from 'react-native-bcrypt';
+
 export default function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -14,19 +16,30 @@ export default function RegisterScreen({ navigation }) {
     }
 
     const savingsValue = parseFloat(savings);
-    if (isNaN(savingsValue)) {
-      Alert.alert('Ошибка', 'Сбережения должны быть числом.');
+    if (isNaN(savingsValue) || savingsValue <= 0) {
+      Alert.alert('Ошибка', 'Сбережения должны быть положительным числом.');
       return;
     }
 
-    const user = {
-      username,
-      password,
-      savings: savingsValue,
-    };
-
     try {
-      await AsyncStorage.setItem('user', JSON.stringify(user));
+      const storedUser = await AsyncStorage.getItem('user');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user.username === username) {
+          Alert.alert('Ошибка', 'Имя пользователя уже существует.');
+          return;
+        }
+      }
+
+      const hashedPassword = bcrypt.hashSync(password, 10);
+
+      const newUser = {
+        username,
+        hashedPassword,
+        savings: savingsValue,
+      };
+
+      await AsyncStorage.setItem('user', JSON.stringify(newUser));
       Alert.alert('Регистрация успешна', 'Теперь вы можете войти в систему');
       navigation.navigate('Login');
     } catch (e) {

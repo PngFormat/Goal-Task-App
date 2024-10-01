@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import LottieView from 'lottie-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import EncryptedStorage from 'react-native-encrypted-storage'; // Secure storage
 import LoadingAnimation from '../components/loadingIndicator';
-import SetGoalScreen from './SetGoalScreen';
-
 
 export default function ReportsScreen({ navigation }) {
   const [user, setUser] = useState(null);
@@ -16,7 +14,7 @@ export default function ReportsScreen({ navigation }) {
 
   const fetchUserData = async () => {
     try {
-      const userInfo = await AsyncStorage.getItem('userInfo');
+      const userInfo = await EncryptedStorage.getItem('userInfo'); // Securely fetch data
       if (userInfo) {
         setUser(JSON.parse(userInfo));
       }
@@ -34,11 +32,8 @@ export default function ReportsScreen({ navigation }) {
   }, []);
 
   if (loading) {
-    return (
-      <LoadingAnimation/>
-    );
+    return <LoadingAnimation />;
   }
-
 
   if (!user) {
     return (
@@ -57,12 +52,12 @@ export default function ReportsScreen({ navigation }) {
       {
         data: monthlySalaries,
         color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
-        strokeWidth: 2
+        strokeWidth: 2,
       },
       {
         data: monthlySavings,
         color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
-        strokeWidth: 2
+        strokeWidth: 2,
       },
     ],
   };
@@ -107,17 +102,11 @@ export default function ReportsScreen({ navigation }) {
       <Text style={styles.description}>Текущая зарплата: ${user.salary || 0}</Text>
       <Text style={styles.description}>Текущие сбережения: ${user.savings?.[currentMonth] || 0}</Text>
 
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={styles.button}
-      >
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.button}>
         <Text style={styles.buttonText}>Вернуться назад</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate('SetGoals')}
-        style={styles.button}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate('SetGoals')} style={styles.button}>
         <Text style={styles.buttonText}>Установить цели</Text>
       </TouchableOpacity>
     </View>
@@ -130,7 +119,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#c5dced', 
+    backgroundColor: '#c5dced',
   },
   title: {
     fontSize: 32,
@@ -142,7 +131,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginBottom: 30,
-    backgroundColor: '#FFF', 
+    backgroundColor: '#FFF',
     borderRadius: 16,
     padding: 10,
     shadowColor: '#000',

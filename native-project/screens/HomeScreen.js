@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, Animated, ActivityIndicator, Alert } from 'react-native';
 import { setUser } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -16,12 +16,12 @@ export default function HomeScreen({ navigation }) {
 
   const loadUserData = useCallback(async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem('user');
+      const jsonValue = await SecureStore.getItemAsync('user');
       if (jsonValue != null) {
         const userData = JSON.parse(jsonValue);
         dispatch(setUser(userData));
       } else {
-        navigation.navigate('Login');
+        Alert.alert('','Успешно')
       }
     } catch (e) {
       console.error("Failed to load user data", e);

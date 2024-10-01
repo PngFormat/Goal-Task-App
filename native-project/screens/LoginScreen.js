@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import bcrypt from 'react-native-bcrypt';
 
 export default function LoginScreen({ navigation }) {
-  const [username, setUsername] = useState('den4ik');
+  const [username, setUsername] = useState('deniska');
   const [password, setPassword] = useState('1234');
+  const [loading, setLoading] = useState(true);
 
   const handleLogin = async () => {
     try {
       const storedUser = await AsyncStorage.getItem('user');
       if (storedUser) {
         const user = JSON.parse(storedUser);
-        if (user.username === username && user.password === password) {
+        const passwordMatch = bcrypt.compareSync(password, user.hashedPassword);
+        if (user.username === username && passwordMatch) {
           Alert.alert("Успешный вход", "Добро пожаловать!");
           navigation.navigate('Home');
         } else {
@@ -24,6 +27,7 @@ export default function LoginScreen({ navigation }) {
       console.error("Failed to login", e);
     }
   };
+
 
   return (
     <ImageBackground source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4IHBGQwRqf4xCHQwv9iokF4IRww7e-Kft7g&s'}} style={styles.background}>

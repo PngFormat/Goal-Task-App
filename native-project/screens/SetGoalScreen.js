@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/Ionicons';
+import EncryptedStorage from 'react-native-encrypted-storage';
 import LogoutButton from '../components/logoutButton';
 
 export default function SetGoalScreen({ navigation }) {
   const [goalAmount, setGoalAmount] = useState('');
   const [targetDate, setTargetDate] = useState('');
 
+  const validateInputs = () => {
+    const amount = parseFloat(goalAmount);
+    if (isNaN(amount) || amount <= 0) {
+      Alert.alert('Error', 'Please enter a valid numeric goal amount.');
+      return false;
+    }
+
+    if (!targetDate || targetDate.length < 3) {
+      Alert.alert('Error', 'Please enter a valid target date.');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSetGoal = async () => {
-    if (!goalAmount || !targetDate) {
-      Alert.alert('Error', 'Please enter a valid goal and target date.');
+    if (!validateInputs()) {
       return;
     }
 
@@ -20,20 +33,17 @@ export default function SetGoalScreen({ navigation }) {
     };
 
     try {
-      await AsyncStorage.setItem('savingsGoal', JSON.stringify(goalData));
-      Alert.alert('Goal Set', 'Your savings goal has been set!');
+      await EncryptedStorage.setItem('savingsGoal', JSON.stringify(goalData));
+      Alert.alert('Goal Set', 'Your savings goal has been securely set!');
       navigation.goBack();
     } catch (e) {
-      Alert.alert('Error', 'Could not save the goal.');
+      Alert.alert('Error', 'Could not securely save the goal.');
     }
   };
 
-  
-
   return (
     <View style={styles.container}>
-     
-     <LogoutButton navigation={navigation} />
+      <LogoutButton navigation={navigation} />
       <Text style={styles.title}>Set a Savings Goal</Text>
 
       <TextInput
@@ -64,7 +74,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
- 
   title: {
     fontSize: 24,
     fontWeight: 'bold',

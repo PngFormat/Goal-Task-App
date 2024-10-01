@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/Ionicons';
+import * as SecureStore from 'expo-secure-store';
 import LogoutButton from '../components/logoutButton';
 
 export default function EditProfileScreen({ route, navigation }) {
@@ -12,29 +11,29 @@ export default function EditProfileScreen({ route, navigation }) {
   const [salary, setSalary] = useState(user.salary ? user.salary.toString() : '');
 
   const currentMonth = new Date().getMonth();
+  const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  
   const [monthlySavings, setMonthlySavings] = useState(
-    Array(currentMonth + 1).fill('').map((_, index) => {
-      return user.savings && user.savings[index] !== undefined ? user.savings[index].toString() : '';
-    })
+    Array(currentMonth + 1).fill('').map((_, index) => 
+      user.savings?.[index] !== undefined ? user.savings[index].toString() : ''
+    )
   );
 
-  const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-
   const handleSave = async () => {
-    const updatedUser = { 
-      ...user, 
+    const updatedUser = {
+      ...user,
       name,
-      email, 
-      salary: Number(salary), 
-      savings: monthlySavings.map(Number) 
+      email,
+      salary: Number(salary),
+      savings: monthlySavings.map(Number),
     };
 
     try {
       onUpdate(updatedUser);
-      await AsyncStorage.setItem('userInfo', JSON.stringify(updatedUser));
-      Alert.alert('Профиль обновлен');
+      await SecureStore.setItemAsync('userInfo', JSON.stringify(updatedUser));
+      Alert.alert('Профиль обновлен');к
       navigation.goBack();
-    } catch (e) {
+    } catch (error) {
       Alert.alert('Ошибка при сохранении данных');
     }
   };
@@ -47,9 +46,8 @@ export default function EditProfileScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-
-      <LogoutButton navigation={navigation}/>
-       <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <LogoutButton navigation={navigation} />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.label}>Имя</Text>
         <TextInput
           style={styles.input}
@@ -105,7 +103,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f5f5f5',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -144,5 +142,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
- 
 });
